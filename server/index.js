@@ -46,12 +46,28 @@ app.get('/genres', function(req, res) {
   })
 });
 
+app.get('/favorites', (req, res) => {
+  db.getAllFavorites((err, data) => {
+    if (err) console.log('GET FAVORITES ERR', err)
+    else res.send(data)
+  })
+})
+
 app.post('/save', function(req, res) {
-  db.saveFavorites()
+  let {title, release_date, popularity, poster_path} = req.body;
+  let params = [title, release_date, popularity, poster_path];
+  db.saveFavorite(params, (err, data) => {
+    if (err) console.log(err)
+    else res.send(data)
+  })
 });
 
 app.post('/delete', function(req, res) {
-
+  let {title} = req.body
+  db.deleteFavorite(title, (err, data) => {
+    if (err) console.log('DELETE ERR', err)
+    else res.sendStatus(200)
+  })
 });
 
 app.listen(3000, function() {

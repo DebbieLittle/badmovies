@@ -6,6 +6,7 @@ import Search from './components/Search.jsx'
 import Movies from './components/Movies.jsx'
 import axios from 'axios';
 
+
 class App extends React.Component {
   constructor(props) {
   	super(props)
@@ -18,11 +19,13 @@ class App extends React.Component {
     this.saveMovie = this.saveMovie.bind(this);
     this.deleteMovie = this.deleteMovie.bind(this);
     this.swapFavorites = this.swapFavorites.bind(this);
+    this.getFavorites = this.getFavorites.bind(this);
     // you might have to do something important here!
   }
 
   componentDidMount() {
     this.getMovies(28);
+    this.getFavorites();
   }
 
   getMovies(selectedGenre) {
@@ -45,14 +48,36 @@ class App extends React.Component {
   }
 
   saveMovie(movie) {
-    this.setState({
-      favorites: movie
+    axios.post('/save', {
+      title: movie.title,
+      release_date: movie.release_date,
+      popularity: movie.popularity,
+      poster_path: movie.poster_path
     })
-    console.log('savemovie firing')
+    .then(res => {
+      this.getFavorites();
+    })
+    .catch(res => {
+      console.log('saveMovieInfo err', err)
+    })
   }
 
-  deleteMovie() {
-    // same as above but do something diff
+  deleteMovie(title) {
+    axios.post('/delete', {
+      title: title
+    })
+    .then(() => {
+      this.getFavorites();
+    })
+  }
+
+  getFavorites() {
+    axios.get('/favorites')
+    .then(res => {
+      this.setState({
+        favorites: res.data
+      })
+    })
   }
 
   swapFavorites() {
@@ -68,7 +93,7 @@ class App extends React.Component {
         <header className="navbar"><h1>Bad Movies</h1></header> 
         
         <div className="main">
-          <Search getMovies={this.getMovies} swapFavorites={this.swapFavorites} showFaves={this.state.showFaves}/>
+          <Search getMovies={this.getMovies} getFavorites={this.getFavorites} swapFavorites={this.swapFavorites} showFaves={this.state.showFaves}/>
           <Movies movies={this.state.showFaves ? this.state.favorites : this.state.movies} showFaves={this.state.showFaves}
                   deleteMovie={this.deleteMovie} saveMovie={this.saveMovie} />
         </div>

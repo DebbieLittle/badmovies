@@ -6,7 +6,7 @@ USE badmovies;
 
 CREATE TABLE favorites (
   id int NOT NULL AUTO_INCREMENT,
-  title varchar(50) NOT NULL,
+  title varchar(50) NOT NULL UNIQUE,
   release_date varchar(10) NOT NULL,
   popularity varchar(3) NOT NULL,
   poster_path varchar(50) NOT NULL,

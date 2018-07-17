@@ -1,13 +1,11 @@
 import React from 'react';
+import axios from 'axios';
 
 class Movies extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      addToFav: []
-    }
-    this.saveMovieInfo = this.saveMovieInfo.bind(this)
+    this.handleMovieClick = this.handleMovieClick.bind(this)
   }
   // Make an onClick for each list item. If the movies shown is the search results, 
   // onClick add it to the database (do it in the main app, and pass down the function)
@@ -15,12 +13,9 @@ class Movies extends React.Component {
   // If you're currently showing the fave list, delete the movie instead
   // You can tell which list is currently being rendered based on whether the prop "showFaves" is false (search results) or true (fave list) (within index.jsx)
 
-  saveMovieInfo (e){
-    this.setState({
-      addToFav: e.target.value
-    })
-    this.props.saveMovie(this.state.addToFav);
-    console.log('savemovieinfo', this.state.addToFav)
+  handleMovieClick (movieObj){
+    if (this.props.showFaves) this.props.deleteMovie(movieObj.title)
+    else this.props.saveMovie(movieObj)
   }
   
   render() {
@@ -30,7 +25,7 @@ class Movies extends React.Component {
       <ul className="movies">
     {this.props.movies.length > 0 && this.props.movies.map((movie) => {
       return (
-    <li className="movie_item" key={movie.title} onClick={this.saveMovieInfo} value={movie.title, movie.release_date, movie.popularity, movie.poster_path}>
+    <li className="movie_item" key={movie.title} onClick={() => this.handleMovieClick(movie)}>
       <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
       <div className="movie_description">
         <h2>{movie.title}</h2>
